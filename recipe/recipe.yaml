@@ -1,7 +1,6 @@
 context:
   name: mcp-server-fetch
-  version: 2025.4.7
-  python_min: 3.10
+  version: "2026.8.18"
 
 package:
   name: ${{ name }}
@@ -9,7 +8,9 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/${{ name[0] }}/${{ name | replace('-','_') }}/${{ name | replace('-','_') }}-${{ version }}.tar.gz
-    sha256: 56279e3c55cb1e506b958ca9bb23ed4413944a6f230bca21e044aee51734fe47
+    sha256: da12533c8218c7a4ee2eb9d789170a317cf758c07cb2cc0211a91bdb0d4b7254
+    patches:
+      - mcp-2-compat.patch
 
 build:
   script: ${{ PYTHON }} -m pip install .
@@ -26,10 +27,10 @@ requirements:
     - hatchling
     - setuptools
   run:
-    - httpx <0.28.0
+    - httpx >=0.27
     - python >=${{ python_min }}
     - markdownify >=0.13.1
-    - mcp >=1.1.3
+    - mcp >=2,<3
     - protego >=0.3.1
     - pydantic >=2.0.0
     - readabilipy >=0.2.0
@@ -41,11 +42,17 @@ tests:
       imports:
         - mcp_server_fetch
       pip_check: true
-      python_version: ${{ python_min }}.*
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - script:
+      - python run_test.py
+    files:
+      recipe:
+        - run_test.py
 
 about:
-  summary: A Model Context Protocol server providing tools to fetch and convert web
-    content for usage by LLMs
+  summary: A Model Context Protocol server providing tools to fetch and convert web content for usage by LLMs
   description: |-
     A Model Context Protocol server that provides web content fetching capabilities.
     This server enables LLMs to retrieve and process content from web pages, converting HTML to markdown for easier consumption.
