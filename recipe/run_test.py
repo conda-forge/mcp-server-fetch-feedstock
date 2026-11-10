@@ -3,6 +3,7 @@ import sys
 
 from mcp import ClientSession, MCPError
 from mcp.client.stdio import StdioServerParameters, stdio_client
+from mcp.types import INVALID_PARAMS
 
 
 async def main() -> None:
@@ -22,16 +23,16 @@ async def main() -> None:
             prompts = await session.list_prompts()
             assert [prompt.name for prompt in prompts.prompts] == ["fetch"]
 
-            for request in (
-                session.call_tool("fetch", {}),
-                session.get_prompt("fetch", {}),
-            ):
-                try:
-                    await request
-                except MCPError as exc:
-                    assert exc.code == -32602
-                else:
-                    raise AssertionError("missing URL should raise MCPError")
+            result = await session.call_tool("fetch", {})
+            assert result.is_error
+            assert "url" in result.content[0].text
+
+            try:
+                await session.get_prompt("fetch", {})
+            except MCPError as exc:
+                assert exc.error.code == INVALID_PARAMS
+            else:
+                raise AssertionError("fetch prompt without a URL should raise MCPError")
 
 
 if __name__ == "__main__":
