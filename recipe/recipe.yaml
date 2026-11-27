@@ -1,6 +1,6 @@
 context:
   name: mcp-server-fetch
-  version: "2026.11.11"
+  version: "2026.11.27"
 
 package:
   name: ${{ name }}
@@ -8,7 +8,7 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/${{ name[0] }}/${{ name | replace('-','_') }}/${{ name | replace('-','_') }}-${{ version }}.tar.gz
-    sha256: 6652fbe0e231f6891d3aa08e0b4943a1d0ea9f5e09e75cc3fb46180b620976e6
+    sha256: 632a3695d81d726871b85f9dce4c5440a86dddefee59189db9b7573cfb2ce0cc
 
 build:
   script: ${{ PYTHON }} -m pip install .
